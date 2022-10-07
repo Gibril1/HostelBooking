@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_admin import Admin
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt
 
 # Init app
 app = Flask(__name__)
@@ -18,3 +19,8 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 # Init admin
 admin = Admin(app)
+# Init bcrypt
+bcrypt = Bcrypt(app)
+
+
+from hostel import routes
