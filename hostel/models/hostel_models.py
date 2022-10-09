@@ -7,7 +7,7 @@ class Hostel(db.Model):
     rating = db.Column(db.Integer)
     avatar= db.Column(db.String(200))
     cloudinary_id= db.Column(db.String(200))
-    manager_id = db.Column(db.Integer, db.ForeignKey('hostelmanagerprofile.id'))
+    manager_id = db.Column(db.Integer, db.ForeignKey('hostelmanager.id'))
     
     facilities = db.relationship('HostelFacilities', backref='facility', lazy=True)
     room_type = db.relationship('HostelRoomType', backref='type', lazy=True)

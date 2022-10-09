@@ -44,6 +44,7 @@ studentprofile_schema = StudentProfileSchema()
 studentprofiles_schema = StudentProfileSchema(many=True)
 
 class HostelManager(db.Model):
+    __tablename__ = 'hostelmanager'
     manager_id = db.Column(db.Integer, primary_key = True)
     first_name = db.Column(db.String(20), nullable = False)
     last_name = db.Column(db.String(20), nullable = False)
@@ -53,7 +54,7 @@ class HostelManager(db.Model):
     gender = db.Column(db.String(10), nullable=False)
 
     user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
-    # hostel_manager = db.relationship('Hostel', backref = 'hostelmanager', lazy = True)
+    hostel_manager = db.relationship('Hostel', backref = 'manager', lazy = True)
 
     def __repr__(self):
         return f'Manager {self.manager_id} - {self.user}'

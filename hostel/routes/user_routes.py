@@ -120,20 +120,14 @@ def login():
 
         elif user.role == 'manager':
             hostelmanager = HostelManager.query.filter_by(user=user.id).first()
-            if hostelmanager:
-                print(hostelmanager.manager_id)
-                print('ffffffff')
+           
             
 
             hostel = Hostel.query.filter_by(manager_id=hostelmanager.manager_id).first()
-            if hostel:
-                print('hhhhhhhhhhh')
-            if not hostel:
-                print('dddd')
+            
             
             rooms = HostelRoomType.query.filter_by(hostel_id=hostel.hostel_id).all()
-            if rooms:
-                print('rrrrrrr')
+          
 
             hostelmanager = hostelmanger_schema.dump(hostelmanager)
             hostel = hostel_schema.dump(hostel)

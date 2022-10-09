@@ -11,7 +11,7 @@ load_dotenv()
 
 from hostel import db, app
 from hostel.models.hostel_models import (
-    Hostel,  hostel_schema,
+    Hostel,  hostel_schema, hostels_schema,
     HostelFacilities, hostelfacilities_schema,
     HostelRoomType, hostelroomtype_schema
 ) 
@@ -184,6 +184,16 @@ def delete_room(room_id):
     return response, 200
 
     
-    
+@app.route('/get/hostel', methods=['GET'])
+def get_hostels():
+    response = {
+        "data":{},
+        "error_message":""
+    }
+
+    hostel = Hostel.query.all()
+    hostel = hostels_schema.dump(hostel)
+    response['data'] = hostel
+    return response, 200
     
     
