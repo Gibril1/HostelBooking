@@ -23,4 +23,4 @@ admin = Admin(app)
 bcrypt = Bcrypt(app)
 
 
-from hostel import routes
+from hostel.routes import user_routes, hostel_routes
