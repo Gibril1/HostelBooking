@@ -10,6 +10,9 @@ class User(db.Model):
     password = db.Column(db.String(20), nullable = False)
     role = db.Column(db.String(20), nullable = False, default='student')
 
+    student = db.relationship('StudentProfile', backref='studentprofile', lazy = True)
+    manager = db.relationship('HostelManager', backref='studentprofile', lazy = True)
+
     def __repr__(self):
         return f'User {self.username} - {self.email_address}'
 
@@ -35,7 +38,7 @@ class StudentProfile(db.Model):
 
 class StudentProfileSchema(ma.Schema):
     class Meta:
-        fields=('reference_number', 'username', 'email_address', 'first_name', 'last_name', 'other_names', 'phone_number', 'program_of_study', 'gender')
+        fields=('reference_number', 'user', 'first_name', 'last_name', 'other_names', 'phone_number', 'program_of_study', 'gender')
 
 studentprofile_schema = StudentProfileSchema()
 studentprofiles_schema = StudentProfileSchema(many=True)
@@ -50,13 +53,16 @@ class HostelManager(db.Model):
     gender = db.Column(db.String(10), nullable=False)
 
     user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
-    hostel_manager = db.relationship('Hostel', backref = 'hostelmanager', lazy = True)
+    # hostel_manager = db.relationship('Hostel', backref = 'hostelmanager', lazy = True)
+
+    def __repr__(self):
+        return f'Manager {self.manager_id} - {self.user}'
     
 
 
 class HostelManagerSchema(ma.Schema):
     class Meta:
-        fields=('username', 'email_address', 'first_name', 'last_name', 'other_names', 'phone_number', 'program_of_study', 'gender')
+        fields=('manager_id', 'user', 'first_name', 'last_name', 'other_names', 'phone_number', 'program_of_study', 'gender')
 
 hostelmanger_schema = HostelManagerSchema()
 hostelmanagers_schema = HostelManagerSchema(many=True)

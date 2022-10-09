@@ -5,6 +5,8 @@ import cloudinary
 import cloudinary.uploader
 
 from dotenv import load_dotenv
+
+from hostel.models.user_models import HostelManager
 load_dotenv()
 
 from hostel import db, app
@@ -16,9 +18,9 @@ from hostel.models.hostel_models import (
 
 import os
 
-@app.route('/create/hostel', methods=['POST'])
+@app.route('/create/hostel/<int:manager_id>', methods=['POST'])
 @cross_origin()
-def create_hostel():
+def create_hostel(manager_id):
     try:
         response = {
             "data":{},
@@ -47,13 +49,16 @@ def create_hostel():
                 # print(upload_result)
             except:
                 response['error_message']['image_error'] = 'Image failed to be uploaded. Try again'
+        
+        hostel_manager = HostelManager.query.get(manager_id=manager_id)
+        if not hostel_manager:
+            response['error_message'] = f'Manager with id {manager_id} does not exist'
+            return response, 404
 
 
-        hostel = Hostel(name=name, location=location, rating = rating, avatar = upload_result['secure_url'], cloudinary_id = upload_result['public_id'])
+        hostel = Hostel(name=name, location=location, rating = rating, avatar = upload_result['secure_url'], cloudinary_id = upload_result['public_id'], manager_id=hostel_manager.manager_id)
         db.session.add(hostel)
         db.session.commit()
-
-        
 
         hostel = hostel_schema.dump(hostel)
         response['data'] = hostel
@@ -64,8 +69,8 @@ def create_hostel():
         return response,200
 
 
-@app.route('/create/facility', methods=['POST'])
-def create_facility():
+@app.route('/create/facility/<int:hostel_id>', methods=['POST'])
+def create_facility(hostel_id):
     response = {
         "data":{},
         "error_message":""
@@ -83,9 +88,14 @@ def create_facility():
             upload_result = cloudinary.uploader.upload(image)
             # print(upload_result)
         except:
-            response['error_message']['image_error'] = jsonify('Image failed to be uploaded. Try again')
+            response['error_message']='Image failed to be uploaded. Try again'
     
-    hostel_facility = HostelFacilities(name=name, avatar = upload_result['secure_url'], cloudinary_id=upload_result['public_url'])
+    hostel = Hostel.query.get(id=hostel_id)
+    if not hostel:
+        response['error_message'] = f'Hostel with id {hostel_id} does not exist'
+        return response, 404
+    
+    hostel_facility = HostelFacilities(name=name, avatar = upload_result['secure_url'], cloudinary_id=upload_result['public_url'], hostel_id=hostel.hostel_id)
 
     db.session.add(hostel_facility)
     db.session.commit()
@@ -94,9 +104,9 @@ def create_facility():
     response['data'] = hostel_facility
     return response, 200
 
-@app.route('/create/room', methods=['POST'])
+@app.route('/create/room/<int:hostel_id>', methods=['POST'])
 @cross_origin()
-def create_room():
+def create_room(hostel_id):
     response = {
         "data":{},
         "error_message":""
@@ -108,7 +118,12 @@ def create_room():
         response['error_message'] = 'Enter the room type'
         return response, 400
 
-    room = HostelRoomType(room_type = data['room_type'], male_bed_space = data['male_bed_space'],available_male_bed_space = data['available_male_bed_space'],female_bed_space = data['female_bed_space'],available_female_bed_space = data['available_female_bed_space'], price=data['price'])
+    hostel = Hostel.query.get(id=hostel_id)
+    if not hostel:
+        response['error_message'] = f'Hostel with id {hostel_id} does not exist'
+        return response, 404
+
+    room = HostelRoomType(room_type = data['room_type'], male_bed_space = data['male_bed_space'],available_male_bed_space = data['available_male_bed_space'],female_bed_space = data['female_bed_space'],available_female_bed_space = data['available_female_bed_space'], price=data['price'], hostel_id=hostel.hostel_id)
     db.session.add(room)
     db.session.commit()
 

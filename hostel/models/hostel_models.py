@@ -1,7 +1,7 @@
 from hostel import db, ma
 
 class Hostel(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    hostel_id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), nullable = False, unique = True)
     location = db.Column(db.String(20))
     rating = db.Column(db.Integer)
@@ -15,7 +15,7 @@ class Hostel(db.Model):
 
 class HostelSchema(ma.Schema):
     class Meta:
-        fields=('name', 'location', 'rating', 'avatar', 'cloudinary_id')
+        fields=('hostel_id','name', 'location', 'rating', 'avatar', 'cloudinary_id')
 
 hostel_schema = HostelSchema()
 hostels_schema = HostelSchema(many=True)
@@ -27,7 +27,7 @@ class HostelFacilities(db.Model):
     avatar = db.Column(db.String(200))
     cloudinary_id = db.Column(db.String(200))
 
-    hostel_id = db.Column(db.Integer, db.ForeignKey('hostel.id'))
+    hostel_id = db.Column(db.Integer, db.ForeignKey('hostel.hostel_id'))
 
 
 class HostelFacilitiesSchema(ma.Schema):
@@ -46,7 +46,7 @@ class HostelRoomType(db.Model):
     available_female_bed_space=db.Column(db.Integer)
     price = db.Column(db.Float)
 
-    hostel_id = db.Column(db.Integer, db.ForeignKey('hostel.id'))
+    hostel_id = db.Column(db.Integer, db.ForeignKey('hostel.hostel_id'))
 
 class HostelRoomTypeSchema(ma.Schema):
     class Meta:
@@ -54,3 +54,4 @@ class HostelRoomTypeSchema(ma.Schema):
 
 
 hostelroomtype_schema = HostelRoomTypeSchema()
+hostelroomtypes_schema = HostelRoomTypeSchema(many=True)
